@@ -13,7 +13,7 @@
  */
 
 const Module = require('module');
-const path = require('path');
+const path = require('node:path');
 
 // ============================================================================
 // Constants & Configuration (常量配置)
@@ -305,7 +305,7 @@ function enableShim() {
         modified = modified.replace(/import\.meta\.url/g, injectionKey);
       } else {
         console.log(`${LOG_PREFIX} Fixing import.meta.url in ${baseName}`);
-        const metaUrlFix = `const ${injectionKey} = require('url').pathToFileURL(__filename).href;\n`;
+        const metaUrlFix = `const ${injectionKey} = require('node:url').pathToFileURL(__filename).href;\n`;
         modified = metaUrlFix + modified;
         modified = modified.replace(/import\.meta\.url/g, injectionKey);
       }

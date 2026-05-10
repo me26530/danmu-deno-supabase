@@ -1,5 +1,5 @@
 import * as esbuild from 'esbuild';
-import fs from 'fs';
+import fs from 'node:fs';
 
 // 动态获取版本号
 import { Globals } from './danmu_api/configs/globals.js';

@@ -1,8 +1,8 @@
 import BaseHandler from "./base-handler.js";
 import { log } from "../../utils/log-util.js";
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // =====================
 // Node环境变量处理类
