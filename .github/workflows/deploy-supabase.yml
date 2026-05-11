@@ -29,4 +29,5 @@ jobs:
           version: latest
 
       - name: Deploy danmu function
-        run: supabase functions deploy danmu --project-ref "$SUPABASE_PROJECT_ID"
+        run: supabase functions deploy danmu --project-ref "$SUPABASE_PROJECT_ID" --no-verify-jwt
+
