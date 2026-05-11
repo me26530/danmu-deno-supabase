@@ -19,6 +19,7 @@ function withCors(response: Response): Response {
 }
 
 function rewriteRequestForDanmu(req: Request): Request {
+function rewriteRequestForDanmu(req: Request): Request {
   const url = new URL(req.url);
 
   const originalPath = url.pathname;
@@ -28,7 +29,38 @@ function rewriteRequestForDanmu(req: Request): Request {
       .replace(/^\/functions\/v1\/danmu(?=\/|$)/, "")
       .replace(/^\/danmu(?=\/|$)/, "") || "/";
 
-  console.log("rewrite path:", originalPath, "=>", url.pathname);
+  // 兼容播放器手动搜索可能使用的不同路径
+  if (
+    url.pathname.includes("/api/v2/search/episodes") ||
+    url.pathname.match(/\/api\/v2\/search\/?$/)
+  ) {
+    url.pathname = url.pathname
+      .replace("/api/v2/search/episodes", "/api/v2/search/anime")
+      .replace(/\/api\/v2\/search\/?$/, "/api/v2/search/anime");
+  }
+
+  // 兼容不同播放器的搜索参数名
+  if (url.pathname.includes("/api/v2/search/anime")) {
+    const keyword =
+      url.searchParams.get("keyword") ||
+      url.searchParams.get("anime") ||
+      url.searchParams.get("q") ||
+      url.searchParams.get("query") ||
+      url.searchParams.get("title") ||
+      url.searchParams.get("name");
+
+    if (keyword && !url.searchParams.get("keyword")) {
+      url.searchParams.set("keyword", keyword);
+    }
+  }
+
+  console.log(
+    "rewrite path:",
+    originalPath,
+    "=>",
+    url.pathname,
+    url.search,
+  );
 
   return new Request(url.toString(), {
     method: req.method,
@@ -37,6 +69,7 @@ function rewriteRequestForDanmu(req: Request): Request {
     redirect: req.redirect,
   });
 }
+
 
 
 Deno.serve(async (req) => {
