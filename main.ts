@@ -16,4 +16,7 @@ export async function handler(request: Request): Promise<Response> {
     RATE_LIMIT_MAX_REQUESTS: Deno.env.get("RATE_LIMIT_MAX_REQUESTS") ?? "",
   });
 }
+if (import.meta.main) {
+  Deno.serve(handler)
+}
 
