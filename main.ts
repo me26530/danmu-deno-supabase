@@ -1,8 +1,7 @@
 import worker from "./danmu_api/worker.js";
 
 export async function handler(request: Request): Promise<Response> {
-
-  return worker.fetch(request, {
+  return await worker.fetch(request, {
     TOKEN: Deno.env.get("TOKEN") ?? "87654321",
     ADMIN_TOKEN: Deno.env.get("ADMIN_TOKEN") ?? "",
     SOURCE_ORDER: Deno.env.get("SOURCE_ORDER") ?? "",
@@ -16,7 +15,7 @@ export async function handler(request: Request): Promise<Response> {
     RATE_LIMIT_MAX_REQUESTS: Deno.env.get("RATE_LIMIT_MAX_REQUESTS") ?? "",
   });
 }
-if (import.meta.main) {
-  Deno.serve(handler)
-}
 
+if (import.meta.main) {
+  Deno.serve(handler);
+}
