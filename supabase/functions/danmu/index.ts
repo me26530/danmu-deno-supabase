@@ -5,7 +5,7 @@ function withCors(response: Response): Response {
   const headers = new Headers(response.headers);
 
   headers.set("access-control-allow-origin", "*");
-  headers.set("access-control-allow-methods", "GET, POST, OPTIONS");
+  headers.set("access-control-allow-methods", "GET, POST, HEAD, OPTIONS");
   headers.set(
     "access-control-allow-headers",
     "authorization, x-client-info, apikey, content-type",
@@ -18,7 +18,6 @@ function withCors(response: Response): Response {
   });
 }
 
-function rewriteRequestForDanmu(req: Request): Request {
 function rewriteRequestForDanmu(req: Request): Request {
   const url = new URL(req.url);
 
@@ -70,14 +69,12 @@ function rewriteRequestForDanmu(req: Request): Request {
   });
 }
 
-
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", {
       headers: {
         "access-control-allow-origin": "*",
-        "access-control-allow-methods": "GET, POST, OPTIONS",
+        "access-control-allow-methods": "GET, POST, HEAD, OPTIONS",
         "access-control-allow-headers":
           "authorization, x-client-info, apikey, content-type",
       },
@@ -85,6 +82,47 @@ Deno.serve(async (req) => {
   }
 
   const rewrittenReq = rewriteRequestForDanmu(req);
+  const rewrittenUrl = new URL(rewrittenReq.url);
+
+  // 兼容播放器 HEAD 探测 /api/v2
+  if (
+    rewrittenReq.method === "HEAD" &&
+    /^\/[^/]+\/api\/v2\/?$/.test(rewrittenUrl.pathname)
+  ) {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, POST, HEAD, OPTIONS",
+        "access-control-allow-headers":
+          "authorization, x-client-info, apikey, content-type",
+        "content-type": "application/json; charset=utf-8",
+      },
+    });
+  }
+
+  // 兼容播放器 GET 探测 /api/v2
+  if (
+    rewrittenReq.method === "GET" &&
+    /^\/[^/]+\/api\/v2\/?$/.test(rewrittenUrl.pathname)
+  ) {
+    return new Response(
+      JSON.stringify({
+        errorCode: 0,
+        success: true,
+        errorMessage: "",
+        message: "danmu api is running",
+      }),
+      {
+        status: 200,
+        headers: {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+        },
+      },
+    );
+  }
+
   const response = await handler(rewrittenReq);
 
   return withCors(response);
