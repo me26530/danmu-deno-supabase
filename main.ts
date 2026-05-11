@@ -1,6 +1,7 @@
 import worker from "./danmu_api/worker.js";
 
-Deno.serve((request: Request) => {
+export async function handler(request: Request): Promise<Response> {
+
   return worker.fetch(request, {
     TOKEN: Deno.env.get("TOKEN") ?? "87654321",
     ADMIN_TOKEN: Deno.env.get("ADMIN_TOKEN") ?? "",
@@ -14,4 +15,5 @@ Deno.serve((request: Request) => {
     VOD_REQUEST_TIMEOUT: Deno.env.get("VOD_REQUEST_TIMEOUT") ?? "",
     RATE_LIMIT_MAX_REQUESTS: Deno.env.get("RATE_LIMIT_MAX_REQUESTS") ?? "",
   });
-});
+}
+
