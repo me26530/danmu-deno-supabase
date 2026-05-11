@@ -13,6 +13,10 @@ export async function handler(request: Request): Promise<Response> {
     VOD_RETURN_MODE: Deno.env.get("VOD_RETURN_MODE") ?? "",
     VOD_REQUEST_TIMEOUT: Deno.env.get("VOD_REQUEST_TIMEOUT") ?? "",
     RATE_LIMIT_MAX_REQUESTS: Deno.env.get("RATE_LIMIT_MAX_REQUESTS") ?? "",
+    UPSTASH_REDIS_REST_URL: Deno.env.get("UPSTASH_REDIS_REST_URL") ?? "",
+    UPSTASH_REDIS_REST_TOKEN: Deno.env.get("UPSTASH_REDIS_REST_TOKEN") ?? "",
+    UPSTASH_DISABLE_TELEMETRY: Deno.env.get("UPSTASH_DISABLE_TELEMETRY") ?? "1",
+
   });
 }
 
